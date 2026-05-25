@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>75-Day DSA Pattern Study Planner</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- React & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-[#000000] text-[#F2F2F7] min-h-screen font-sans antialiased selection:bg-[#0A84FF]/30">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- DEFAULT PRELOADED SHEET DATA ---
+    // Grounded in the classic 150+ question pattern cheat sheet in case user wants immediate interactive planning
+    const defaultPatterns = [
+      {
+        name: "Two Pointers",
+        questions: [
+          { name: "Pair with Target Sum", difficulty: "Easy", links: ["https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/description/"] },
+          { name: "Rearrange 0 and 1", difficulty: "Easy", links: ["https://www.geeksforgeeks.org/problems/segregate-0s-and-1s5106/1"] },
+          { name: "Remove Duplicates", difficulty: "Easy", links: ["https://leetcode.com/problems/remove-duplicates-from-sorted-array/"] },
+          { name: "Squaring a Sorted Array", difficulty: "Easy", links: ["https://leetcode.com/problems/squares-of-a-sorted-array/"] },
+          { name: "Triplet Sum to Zero", difficulty: "Medium", links: ["https://leetcode.com/problems/3sum/"] },
+          { name: "Triplet Sum Close to Target", difficulty: "Medium", links: ["https://leetcode.com/problems/3sum-closest/"] },
+          { name: "Triplets with Smaller Sum", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/count-triplets-with-sum-smaller-than-x5549/1"] },
+          { name: "Subarrays with Product Less than a Target", difficulty: "Medium", links: ["https://leetcode.com/problems/subarray-product-less-than-k/"] },
+          { name: "Dutch National Flag Problem", difficulty: "Medium", links: ["https://leetcode.com/problems/sort-colors/"] },
+          { name: "Problem Challenge 1: Quadruple Sum to Target", difficulty: "Medium", links: ["https://leetcode.com/problems/4sum/"] },
+          { name: "Problem Challenge 2: Comparing Strings containing Backspaces", difficulty: "Easy", links: ["https://leetcode.com/problems/backspace-string-compare/"] },
+          { name: "Problem Challenge 3: Minimum Window Sort", difficulty: "Medium", links: ["https://leetcode.com/problems/shortest-unsorted-continuous-subarray/"] }
+        ]
+      },
+      {
+        name: "Fast & Slow Pointers",
+        questions: [
+          { name: "LinkedList Cycle", difficulty: "Easy", links: ["https://leetcode.com/problems/linked-list-cycle/"] },
+          { name: "Start of LinkedList Cycle", difficulty: "Medium", links: ["https://leetcode.com/problems/linked-list-cycle-ii/"] },
+          { name: "Happy Number", difficulty: "Easy", links: ["https://leetcode.com/problems/happy-number/"] },
+          { name: "Middle of the LinkedList", difficulty: "Easy", links: ["https://leetcode.com/problems/middle-of-the-linked-list/"] },
+          { name: "Problem Challenge 1: Palindrome LinkedList", difficulty: "Medium", links: ["https://leetcode.com/problems/palindrome-linked-list/"] },
+          { name: "Problem Challenge 2: Rearrange a LinkedList", difficulty: "Medium", links: ["https://leetcode.com/problems/reorder-list/"] },
+          { name: "Problem Challenge 3: Cycle in a Circular Array", difficulty: "Hard", links: ["https://leetcode.com/problems/circular-array-loop/"] }
+        ]
+      },
+      {
+        name: "Sliding Window",
+        questions: [
+          { name: "Maximum Sum Subarray of Size K", difficulty: "Easy", links: ["https://www.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1"] },
+          { name: "Smallest Subarray with a given sum", difficulty: "Easy", links: ["https://leetcode.com/problems/minimum-size-subarray-sum/"] },
+          { name: "Longest Substring with K Distinct Characters", difficulty: "Medium", links: ["https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/"] },
+          { name: "Fruits into Baskets", difficulty: "Medium", links: ["https://leetcode.com/problems/fruit-into-baskets/"] },
+          { name: "No-repeat Substring", difficulty: "Hard", links: ["https://leetcode.com/problems/longest-substring-without-repeating-characters/"] },
+          { name: "Longest Substring with Same Letters after Replacement", difficulty: "Hard", links: ["https://leetcode.com/problems/longest-repeating-character-replacement/"] },
+          { name: "Longest Subarray with Ones after Replacement", difficulty: "Hard", links: ["https://leetcode.com/problems/max-consecutive-ones-iii/"] },
+          { name: "Minimum size subarray SUM", difficulty: "Medium", links: ["https://leetcode.com/problems/minimum-size-subarray-sum/"] },
+          { name: "Minimum Size Substring", difficulty: "Hard", links: ["https://leetcode.com/problems/minimum-window-substring/"] },
+          { name: "Problem Challenge 1: Permutation in a String", difficulty: "Hard", links: ["https://leetcode.com/problems/permutation-in-string/"] },
+          { name: "Problem Challenge 2: String Anagrams", difficulty: "Hard", links: ["https://leetcode.com/problems/find-all-anagrams-in-a-string/"] },
+          { name: "Problem Challenge 4: Words Concatenation", difficulty: "Hard", links: ["https://leetcode.com/problems/substring-with-concatenation-of-all-words/"] }
+        ]
+      },
+      {
+        name: "Kadane's Algorithm",
+        questions: [
+          { name: "Maximum Subarray Sum", difficulty: "Easy", links: ["https://leetcode.com/problems/maximum-subarray/"] },
+          { name: "Minimum Subarray Sum", difficulty: "Medium", links: ["https://leetcode.com/problems/minimum-size-subarray-sum/"] },
+          { name: "Maximum Product Subarray", difficulty: "Medium", links: ["https://leetcode.com/problems/maximum-product-subarray/"] },
+          { name: "Maximum Subarray Sum with One Deletion", difficulty: "Medium", links: ["https://leetcode.com/problems/maximum-subarray-sum-with-one-deletion/"] },
+          { name: "Maximum Absolute Sum of Any Subarray", difficulty: "Medium", links: ["https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/"] },
+          { name: "Maximum Sum in Circular Array Variant", difficulty: "Medium", links: ["https://leetcode.com/problems/maximum-sum-circular-subarray/"] }
+        ]
+      },
+      {
+        name: "Prefix Sum",
+        questions: [
+          { name: "Subarray Sum Equals K", difficulty: "Medium", links: ["https://leetcode.com/problems/subarray-sum-equals-k/"] },
+          { name: "Find Pivot Index", difficulty: "Easy", links: ["https://leetcode.com/problems/find-pivot-index/"] },
+          { name: "Subarray Sums Divisible By K", difficulty: "Medium", links: ["https://leetcode.com/problems/subarray-sums-divisible-by-k/"] },
+          { name: "Contiguous Array", difficulty: "Medium", links: ["https://leetcode.com/problems/contiguous-array/"] },
+          { name: "Shortest Subarray With Sum at Least K", difficulty: "Hard", links: ["https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/"] },
+          { name: "Count Range Sum", difficulty: "Hard", links: ["https://leetcode.com/problems/count-of-range-sum/"] }
+        ]
+      },
+      {
+        name: "Merge Intervals",
+        questions: [
+          { name: "Merge Intervals", difficulty: "Medium", links: ["https://leetcode.com/problems/merge-intervals/"] },
+          { name: "Insert Interval", difficulty: "Medium", links: ["https://leetcode.com/problems/insert-interval/"] },
+          { name: "Intervals Intersection", difficulty: "Medium", links: ["https://leetcode.com/problems/interval-list-intersections/"] },
+          { name: "Overlapping Intervals / Conflicting Appointments", difficulty: "Medium", links: ["https://leetcode.com/problems/meeting-rooms/"] },
+          { name: "Problem Challenge 1: Minimum Meeting Rooms", difficulty: "Hard", links: ["https://leetcode.com/problems/meeting-rooms-ii/"] },
+          { name: "Problem Challenge 2: Maximum CPU Load", difficulty: "Hard", links: ["https://www.geeksforgeeks.org/problems/maximum-cpu-load/"] },
+          { name: "Problem Challenge 3: Employee Free Time", difficulty: "Hard", links: ["https://leetcode.com/problems/employee-free-time/"] }
+        ]
+      },
+      {
+        name: "Cyclic Sort",
+        questions: [
+          { name: "Cyclic Sort", difficulty: "Easy", links: ["https://www.geeksforgeeks.org/problems/cyclic-sort/"] },
+          { name: "Find the Missing Number", difficulty: "Easy", links: ["https://leetcode.com/problems/missing-number/"] },
+          { name: "Find all Missing Numbers", difficulty: "Easy", links: ["https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/"] },
+          { name: "Find the Duplicate Number", difficulty: "Medium", links: ["https://leetcode.com/problems/find-the-duplicate-number/"] },
+          { name: "Find all Duplicate Numbers", difficulty: "Medium", links: ["https://leetcode.com/problems/find-all-duplicates-in-an-array/"] },
+          { name: "Problem Challenge 1: Find the Corrupt Pair", difficulty: "Easy", links: ["https://leetcode.com/problems/set-mismatch/"] },
+          { name: "Problem Challenge 2: Find the Smallest Missing Positive Number", difficulty: "Hard", links: ["https://leetcode.com/problems/first-missing-positive/"] },
+          { name: "Problem Challenge 3: Find the First K Missing Positive Numbers", difficulty: "Hard", links: ["https://leetcode.com/problems/kth-missing-positive-number/"] }
+        ]
+      },
+      {
+        name: "In-place Reversal of a LinkedList",
+        questions: [
+          { name: "Reverse a LinkedList", difficulty: "Easy", links: ["https://leetcode.com/problems/reverse-linked-list/"] },
+          { name: "Reverse a Sub-list", difficulty: "Medium", links: ["https://leetcode.com/problems/reverse-linked-list-ii/"] },
+          { name: "Reverse every K-element Sub-list", difficulty: "Hard", links: ["https://leetcode.com/problems/reverse-nodes-in-k-group/"] },
+          { name: "Problem Challenge 1: Reverse alternating K-element Sub-list", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/reverse-alternate-k-nodes-in-a-linked-list/1"] },
+          { name: "Problem Challenge 2: Rotate a LinkedList", difficulty: "Medium", links: ["https://leetcode.com/problems/rotate-list/"] }
+        ]
+      },
+      {
+        name: "Stack",
+        questions: [
+          { name: "Balanced Parentheses", difficulty: "Easy", links: ["https://leetcode.com/problems/valid-parentheses/"] },
+          { name: "Reverse a String", difficulty: "Easy", links: ["https://leetcode.com/problems/reverse-string/"] },
+          { name: "Decimal to Binary Conversion", difficulty: "Easy", links: ["https://www.geeksforgeeks.org/problems/decimal-to-binary-conversion/"] },
+          { name: "Next Greater Element", difficulty: "Medium", links: ["https://leetcode.com/problems/next-greater-element-i/"] },
+          { name: "Sorting a Stack", difficulty: "Easy", links: ["https://www.geeksforgeeks.org/problems/sort-a-stack/1"] },
+          { name: "Simplify Path", difficulty: "Medium", links: ["https://leetcode.com/problems/simplify-path/"] }
+        ]
+      },
+      {
+        name: "Monotonic Stack",
+        questions: [
+          { name: "Next Greater Element II", difficulty: "Medium", links: ["https://leetcode.com/problems/next-greater-element-ii/"] },
+          { name: "Daily Temperatures", difficulty: "Medium", links: ["https://leetcode.com/problems/daily-temperatures/"] },
+          { name: "Remove Nodes From Linked List", difficulty: "Medium", links: ["https://leetcode.com/problems/remove-nodes-from-linked-list/"] },
+          { name: "Remove All Adjacent Duplicates In String", difficulty: "Easy", links: ["https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/"] },
+          { name: "Remove All Adjacent Duplicates in String II", difficulty: "Medium", links: ["https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/"] },
+          { name: "Remove K Digits", difficulty: "Hard", links: ["https://leetcode.com/problems/remove-k-digits/"] }
+        ]
+      },
+      {
+        name: "Hash Maps",
+        questions: [
+          { name: "First Non-repeating Character", difficulty: "Easy", links: ["https://leetcode.com/problems/first-unique-character-in-a-string/"] },
+          { name: "Largest Unique Number", difficulty: "Easy", links: ["https://leetcode.com/problems/largest-unique-number/"] },
+          { name: "Maximum Number of Balloons", difficulty: "Easy", links: ["https://leetcode.com/problems/maximum-number-of-balloons/"] },
+          { name: "Longest Palindrome", difficulty: "Easy", links: ["https://leetcode.com/problems/longest-palindrome/"] },
+          { name: "Ransom Note", difficulty: "Easy", links: ["https://leetcode.com/problems/ransom-note/"] }
+        ]
+      },
+      {
+        name: "Tree Breadth First Search",
+        questions: [
+          { name: "Binary Tree Level Order Traversal", difficulty: "Easy", links: ["https://leetcode.com/problems/binary-tree-level-order-traversal/"] },
+          { name: "Reverse Level Order Traversal", difficulty: "Easy", links: ["https://leetcode.com/problems/binary-tree-level-order-traversal-ii/"] },
+          { name: "Zigzag Traversal", difficulty: "Medium", links: ["https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/"] },
+          { name: "Level Averages in a Binary Tree", difficulty: "Easy", links: ["https://leetcode.com/problems/average-of-levels-in-binary-tree/"] },
+          { name: "Minimum Depth of a Binary Tree", difficulty: "Easy", links: ["https://leetcode.com/problems/minimum-depth-of-binary-tree/"] },
+          { name: "Maximum Depth of a Binary Tree", difficulty: "Easy", links: ["https://leetcode.com/problems/maximum-depth-of-binary-tree/"] },
+          { name: "Level Order Successor", difficulty: "Easy", links: ["https://www.geeksforgeeks.org/problems/level-order-successor/"] },
+          { name: "Connect Level Order Siblings", difficulty: "Medium", links: ["https://leetcode.com/problems/populating-next-right-pointers-in-each-node/"] },
+          { name: "Problem Challenge 1: Connect All Level Order Siblings", difficulty: "Medium", links: ["https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/"] },
+          { name: "Problem Challenge 2: Right View of a Binary Tree", difficulty: "Easy", links: ["https://leetcode.com/problems/binary-tree-right-side-view/"] }
+        ]
+      },
+      {
+        name: "Tree Depth First Search",
+        questions: [
+          { name: "Binary Tree Path Sum", difficulty: "Easy", links: ["https://leetcode.com/problems/path-sum/"] },
+          { name: "All Paths for a Sum", difficulty: "Medium", links: ["https://leetcode.com/problems/path-sum-ii/"] },
+          { name: "Sum of Path Numbers", difficulty: "Medium", links: ["https://leetcode.com/problems/sum-root-to-leaf-numbers/"] },
+          { name: "Path With Given Sequence", difficulty: "Medium", links: ["https://leetcode.com/problems/check-if-a-string-is-a-valid-sequence-from-root-to-leaves-path-in-a-binary-tree/"] },
+          { name: "Count Paths for a Sum", difficulty: "Medium", links: ["https://leetcode.com/problems/path-sum-iii/"] },
+          { name: "Problem Challenge 1: Tree Diameter", difficulty: "Medium", links: ["https://leetcode.com/problems/diameter-of-binary-tree/"] },
+          { name: "Problem Challenge 2: Path with Maximum Sum", difficulty: "Hard", links: ["https://leetcode.com/problems/binary-tree-maximum-path-sum/"] }
+        ]
+      },
+      {
+        name: "Graphs (Matrix Traversal & Algorithms)",
+        questions: [
+          { name: "Number of Provinces", difficulty: "Medium", links: ["https://leetcode.com/problems/number-of-provinces/"] },
+          { name: "Rotten Oranges", difficulty: "Medium", links: ["https://leetcode.com/problems/rotting-oranges/"] },
+          { name: "Cycle detection in undirected graph", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1"] },
+          { name: "Cycle detection in directed graph", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1"] },
+          { name: "Topological sort", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/topological-sort/1"] },
+          { name: "Bipartite Graph/ Graph Coloring", difficulty: "Medium", links: ["https://leetcode.com/problems/is-graph-bipartite/"] },
+          { name: "Surrounded Regions", difficulty: "Medium", links: ["https://leetcode.com/problems/surrounded-regions/"] },
+          { name: "Shortest Path in Non-Weighted Graph", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph-having-unit-distance/1"] },
+          { name: "Dijkstra's Algorithm", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1"] },
+          { name: "Network Delay Time", difficulty: "Medium", links: ["https://leetcode.com/problems/network-delay-time/"] },
+          { name: "Path With Minimum Effort", difficulty: "Medium", links: ["https://leetcode.com/problems/path-with-minimum-effort/"] },
+          { name: "Swim in Rising Water", difficulty: "Hard", links: ["https://leetcode.com/problems/swim-in-rising-water/"] },
+          { name: "Bellman Ford Algorithm", difficulty: "Medium", links: ["https://www.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/1"] },
+          { name: "Cheapest Flights Within K Stops", difficulty: "Medium", links: ["https://leetcode.com/problems/cheapest-flights-within-k-stops/"] }
+        ]
+      }
+    ];
+
+    // Simple robust JS CSV Parser function
+    const parseCSV = (text) => {
+      const lines = text.split(/\r?\n/);
+      const patterns = [];
+      let currentPattern = null;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        const cols = [];
+        let insideQuote = false;
+        let currentCol = '';
+        for (let j = 0; j < line.length; j++) {
+          const char = line[j];
+          if (char === '"') {
+            insideQuote = !insideQuote;
+          } else if (char === ',' && !insideQuote) {
+            cols.push(currentCol.trim());
+            currentCol = '';
+          } else {
+            currentCol += char;
+          }
+        }
+        cols.push(currentCol.trim());
+
+        // Check if pattern row
+        const potentialHeader = cols.find(c => 
+          /pattern:/i.test(c) || 
+          /pattern\s*:/i.test(c) || 
+          /^(\d+\.)?\s*pattern/i.test(c) ||
+          /^[A-Z\s]+PATTERN/i.test(c)
+        );
+
+        if (potentialHeader) {
+          let patName = potentialHeader.replace(/^\d+\.\s*/, '').replace(/Pattern\s*:\s*/i, '').trim();
+          currentPattern = {
+            name: patName || "General Pattern",
+            questions: []
+          };
+          patterns.push(currentPattern);
+        } else if (cols.length > 1) {
+          const name = cols[1];
+          const link1 = cols[2];
+          const link2 = cols[3];
+          const link3 = cols[4];
+          
+          if (name && (link1 || link2 || link3 || name.toLowerCase().includes('easy') || name.toLowerCase().includes('medium') || name.toLowerCase().includes('hard'))) {
+            if (name.toLowerCase() === 'question' || name.toLowerCase().includes('insta channel')) continue;
+            
+            let difficulty = 'Medium';
+            if (name.toLowerCase().includes('(easy)') || name.toLowerCase().includes('easy')) difficulty = 'Easy';
+            else if (name.toLowerCase().includes('(hard)') || name.toLowerCase().includes('hard')) difficulty = 'Hard';
+            else if (name.toLowerCase().includes('(medium)') || name.toLowerCase().includes('medium')) difficulty = 'Medium';
+
+            const cleanName = name.replace(/\((easy|medium|hard)\)/i, '').trim();
+            const validLinks = [link1, link2, link3].filter(l => l && l.startsWith('http'));
+
+            if (currentPattern) {
+              currentPattern.questions.push({
+                name: cleanName,
+                difficulty,
+                links: validLinks
+              });
+            } else if (patterns.length > 0) {
+              patterns[patterns.length - 1].questions.push({
+                name: cleanName,
+                difficulty,
+                links: validLinks
+              });
+            }
+          }
+        }
+      }
+      return patterns.length > 0 ? patterns : null;
+    };
+
+    function App() {
+      const [patterns, setPatterns] = useState(() => {
+        const local = localStorage.getItem('dsa_patterns_data');
+        return local ? JSON.parse(local) : defaultPatterns;
+      });
+      const [completed, setCompleted] = useState(() => {
+        const local = localStorage.getItem('dsa_completed_questions');
+        return local ? JSON.parse(local) : {};
+      });
+      const [notes, setNotes] = useState(() => {
+        const local = localStorage.getItem('dsa_question_notes');
+        return local ? JSON.parse(local) : {};
+      });
+      const [searchTerm, setSearchTerm] = useState('');
+      const [difficultyFilter, setDifficultyFilter] = useState('All');
+      const [activeTab, setActiveTab] = useState('plan'); // 'plan' | 'patterns' | 'dashboard'
+      const [selectedPattern, setSelectedPattern] = useState('All');
+      const [currentDayOffset, setCurrentDayOffset] = useState(1);
+      const [selectedQuestionForNote, setSelectedQuestionForNote] = useState(null);
+      const [tempNote, setTempNote] = useState('');
+
+      useEffect(() => {
+        localStorage.setItem('dsa_patterns_data', JSON.stringify(patterns));
+      }, [patterns]);
+
+      useEffect(() => {
+        localStorage.setItem('dsa_completed_questions', JSON.stringify(completed));
+      }, [completed]);
+
+      useEffect(() => {
+        localStorage.setItem('dsa_question_notes', JSON.stringify(notes));
+      }, [notes]);
+
+      // Flatten questions list with patterns for unified queries
+      const allQuestions = useMemo(() => {
+        const list = [];
+        patterns.forEach(pat => {
+          pat.questions.forEach(q => {
+            list.push({ ...q, patternName: pat.name });
+          });
+        });
+        return list;
+      }, [patterns]);
+
+      // Calculate the 75-Day Schedule distribution dynamically
+      const dayByDaySchedule = useMemo(() => {
+        const plan = [];
+        let questionIndex = 0;
+        const totalQs = allQuestions.length;
+        const targetDays = 75;
+
+        // Evenly distribute questions across 75 days.
+        const questionsPerDay = Math.ceil(totalQs / targetDays);
+
+        for (let day = 1; day <= targetDays; day++) {
+          const dayQuestions = [];
+          
+          // Every 7th day is a customized review/rest day
+          if (day % 7 === 0) {
+            plan.push({
+              day,
+              type: 'Review & Buffer',
+              description: 'Review the past week’s algorithms, optimize slow solutions, and catch up on missed questions.',
+              questions: []
+            });
+          } else {
+            // Fill with questions
+            for (let i = 0; i < questionsPerDay && questionIndex < totalQs; i++) {
+              dayQuestions.push(allQuestions[questionIndex]);
+              questionIndex++;
+            }
+            
+            // Generate dynamic description based on predominant pattern of the day
+            let desc = '';
+            if (dayQuestions.length > 0) {
+              const currentPattern = dayQuestions[0].patternName;
+              desc = `Deep dive into standard ${currentPattern} logic. Focus on time and space complexity optimization.`;
+            } else {
+              desc = `Congratulations! You've scheduled all problems. Use this day for general review and mock mock interviews.`;
+            }
+
+            plan.push({
+              day,
+              type: 'Coding Day',
+              description: desc,
+              questions: dayQuestions
+            });
+          }
+        }
+        return plan;
+      }, [allQuestions]);
+
+      // Statistics calculations
+      const stats = useMemo(() => {
+        const total = allQuestions.length;
+        const solved = Object.keys(completed).filter(k => completed[k]).length;
+        const progressPercent = total > 0 ? Math.round((solved / total) * 100) : 0;
+        
+        const easyTotal = allQuestions.filter(q => q.difficulty === 'Easy').length;
+        const easySolved = allQuestions.filter(q => q.difficulty === 'Easy' && completed[q.name]).length;
+        
+        const mediumTotal = allQuestions.filter(q => q.difficulty === 'Medium').length;
+        const mediumSolved = allQuestions.filter(q => q.difficulty === 'Medium' && completed[q.name]).length;
+        
+        const hardTotal = allQuestions.filter(q => q.difficulty === 'Hard').length;
+        const hardSolved = allQuestions.filter(q => q.difficulty === 'Hard' && completed[q.name]).length;
+
+        return {
+          total,
+          solved,
+          progressPercent,
+          easy: { total: easyTotal, solved: easySolved, pct: easyTotal > 0 ? Math.round((easySolved/easyTotal)*100) : 0 },
+          medium: { total: mediumTotal, solved: mediumSolved, pct: mediumTotal > 0 ? Math.round((mediumSolved/mediumTotal)*100) : 0 },
+          hard: { total: hardTotal, solved: hardSolved, pct: hardTotal > 0 ? Math.round((hardSolved/hardTotal)*100) : 0 },
+        };
+      }, [allQuestions, completed]);
+
+      const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const text = evt.target.result;
+          const parsed = parseCSV(text);
+          if (parsed) {
+            setPatterns(parsed);
+            setCompleted({}); // Reset completion state for the new uploaded sheet
+          } else {
+            alert("Could not extract any standard coding patterns. Please ensure your CSV is matching the pattern sheet format!");
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      const toggleComplete = (qName) => {
+        setCompleted(prev => ({
+          ...prev,
+          [qName]: !prev[qName]
+        }));
+      };
+
+      const openNotesModal = (qName) => {
+        setSelectedQuestionForNote(qName);
+        setTempNote(notes[qName] || '');
+      };
+
+      const saveNote = () => {
+        setNotes(prev => ({
+          ...prev,
+          [selectedQuestionForNote]: tempNote
+        }));
+        setSelectedQuestionForNote(null);
+      };
+
+      // Filtered questions for the patterns tab
+      const filteredQuestions = useMemo(() => {
+        return allQuestions.filter(q => {
+          const matchSearch = q.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              q.patternName.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchDifficulty = difficultyFilter === 'All' || q.difficulty === difficultyFilter;
+          const matchPattern = selectedPattern === 'All' || q.patternName === selectedPattern;
+          return matchSearch && matchDifficulty && matchPattern;
+        });
+      }, [allQuestions, searchTerm, difficultyFilter, selectedPattern]);
+
+      return (
+        <div class="max-w-6xl mx-auto px-4 py-12 md:py-16">
+          {/* HEADER BAR */}
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+            <div>
+              <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white mb-2">
+                DSA 75
+              </h1>
+              <p class="text-[#8E8E93] text-base font-medium">Structured Pattern-Based Mastery</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <label class="flex items-center gap-2 bg-[#1C1C1E] hover:bg-[#2C2C2E] transition-colors px-5 py-2.5 rounded-full cursor-pointer text-sm font-medium text-white border border-white/[0.08]">
+                <i data-lucide="upload" class="w-4 h-4 text-[#8E8E93]"></i>
+                <span>Upload CSV</span>
+                <input type="file" accept=".csv" onChange={handleFileUpload} class="hidden" />
+              </label>
+              <button 
+                onClick={() => { if(confirm("Reset all progress? This action cannot be undone.")) { setCompleted({}); setNotes({}); } }}
+                class="flex items-center gap-2 bg-transparent hover:bg-[#FF453A]/10 text-[#FF453A] transition-colors px-5 py-2.5 rounded-full text-sm font-medium border border-[#FF453A]/20"
+              >
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                Reset
+              </button>
+            </div>
+          </div>
+
+          {/* DASHBOARD SUMMARY CARDS */}
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+            <div class="bg-[#1C1C1E] p-6 rounded-[2rem] border border-white/[0.05] flex flex-col justify-between">
+              <p class="text-sm font-medium text-[#8E8E93]">Overall Progress</p>
+              <div class="mt-6 flex items-end justify-between">
+                <div>
+                  <h3 class="text-3xl font-semibold text-white tracking-tight">{stats.solved}<span class="text-[#8E8E93] text-xl font-medium"> / {stats.total}</span></h3>
+                </div>
+                <div class="text-right">
+                  <span class="text-xl font-semibold text-[#0A84FF]">{stats.progressPercent}%</span>
+                </div>
+              </div>
+              <div class="w-full bg-[#2C2C2E] h-1.5 rounded-full mt-5 overflow-hidden">
+                <div class="bg-[#0A84FF] h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${stats.progressPercent}%` }}></div>
+              </div>
+            </div>
+
+            {[
+              { label: 'Easy', stats: stats.easy, color: 'bg-[#32D74B]', text: 'text-[#32D74B]' },
+              { label: 'Medium', stats: stats.medium, color: 'bg-[#FF9F0A]', text: 'text-[#FF9F0A]' },
+              { label: 'Hard', stats: stats.hard, color: 'bg-[#FF453A]', text: 'text-[#FF453A]' }
+            ].map(level => (
+              <div key={level.label} class="bg-[#1C1C1E] p-6 rounded-[2rem] border border-white/[0.05] flex flex-col justify-between">
+                <div class="flex justify-between items-center">
+                  <p class="text-sm font-medium text-[#8E8E93]">{level.label}</p>
+                  <span class={`${level.text} text-sm font-semibold`}>{level.stats.pct}%</span>
+                </div>
+                <div class="mt-6">
+                  <h3 class="text-2xl font-semibold text-white tracking-tight">{level.stats.solved}<span class="text-[#8E8E93] text-lg font-medium"> / {level.stats.total}</span></h3>
+                </div>
+                <div class="w-full bg-[#2C2C2E] h-1.5 rounded-full mt-5 overflow-hidden">
+                  <div class={`${level.color} h-full rounded-full transition-all duration-700 ease-out`} style={{ width: `${level.stats.pct}%` }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* TAB SYSTEM */}
+          <div class="flex border-b border-white/[0.08] mb-8 gap-8 overflow-x-auto scrollbar-hide">
+            {[
+              { id: 'plan', icon: 'calendar', label: '75-Day Schedule' },
+              { id: 'patterns', icon: 'layers', label: `Patterns (${patterns.length})` },
+              { id: 'dashboard', icon: 'trending-up', label: 'Analytics' }
+            ].map(tab => (
+              <button 
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                class={`pb-4 text-sm font-medium flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${activeTab === tab.id ? 'border-white text-white' : 'border-transparent text-[#8E8E93] hover:text-[#D1D1D6]'}`}
+              >
+                <i data-lucide={tab.icon} class="w-4 h-4"></i>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* 75-DAY PLAN CONTENT VIEW */}
+          {activeTab === 'plan' && (
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+              {/* Daily Navigation Sidebar */}
+              <div class="lg:col-span-3 bg-[#1C1C1E] rounded-3xl border border-white/[0.05] h-[650px] flex flex-col overflow-hidden">
+                <div class="p-5 border-b border-white/[0.05]">
+                  <h4 class="text-sm font-semibold text-white">Timeline</h4>
+                </div>
+                <div class="overflow-y-auto flex-1 p-3 space-y-1 scrollbar-hide">
+                  {dayByDaySchedule.map((dayPlan) => {
+                    const isCompleted = dayPlan.questions.length > 0 && dayPlan.questions.every(q => completed[q.name]);
+                    const isRest = dayPlan.type === 'Review & Buffer';
+                    return (
+                      <button
+                        key={dayPlan.day}
+                        onClick={() => setCurrentDayOffset(dayPlan.day)}
+                        class={`w-full flex items-center justify-between p-3 rounded-2xl transition-all text-left text-sm ${
+                          currentDayOffset === dayPlan.day 
+                            ? 'bg-[#0A84FF] text-white shadow-md' 
+                            : 'hover:bg-[#2C2C2E] text-[#8E8E93] hover:text-white'
+                        }`}
+                      >
+                        <div class="flex items-center gap-3">
+                          <span class={`font-semibold ${currentDayOffset === dayPlan.day ? 'text-white' : 'text-[#F2F2F7]'}`}>D{dayPlan.day}</span>
+                          <span class="truncate max-w-[100px] text-xs">{isRest ? 'Review' : dayPlan.questions[0]?.patternName || 'Buffer'}</span>
+                        </div>
+                        {isCompleted && dayPlan.questions.length > 0 && (
+                          <span class={`${currentDayOffset === dayPlan.day ? 'text-white' : 'text-[#32D74B]'}`}>
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                          </span>
+                        )}
+                        {isRest && (
+                          <span class="w-1.5 h-1.5 rounded-full bg-[#FF9F0A]"></span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Active Day View */}
+              <div class="lg:col-span-9 space-y-6">
+                {(() => {
+                  const dayData = dayByDaySchedule.find(d => d.day === currentDayOffset);
+                  if (!dayData) return null;
+                  
+                  const isRest = dayData.type === 'Review & Buffer';
+                  const totalQuestions = dayData.questions.length;
+                  const completedCount = dayData.questions.filter(q => completed[q.name]).length;
+
+                  return (
+                    <div class="bg-[#1C1C1E] p-6 md:p-10 rounded-[2.5rem] border border-white/[0.05] space-y-8">
+                      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div>
+                          <span class="text-sm font-semibold text-[#0A84FF] mb-2 block">Day {dayData.day} of 75</span>
+                          <h2 class="text-3xl font-bold tracking-tight text-white">
+                            {isRest ? 'Strategy & Review' : dayData.questions[0]?.patternName || 'Completion Run'}
+                          </h2>
+                          <p class="text-[#8E8E93] text-sm mt-2 leading-relaxed max-w-xl">{dayData.description}</p>
+                        </div>
+                        {totalQuestions > 0 && (
+                          <div class="text-right">
+                            <span class="text-4xl font-semibold tracking-tight text-white">{completedCount}<span class="text-[#8E8E93] text-2xl">/{totalQuestions}</span></span>
+                          </div>
+                        )}
+                      </div>
+
+                      {isRest ? (
+                        <div class="bg-[#2C2C2E] rounded-[2rem] p-8 flex flex-col md:flex-row gap-8 items-center border border-white/[0.05]">
+                          <div class="text-[#FF9F0A] p-5 bg-[#FF9F0A]/10 rounded-full">
+                            <i data-lucide="coffee" class="w-12 h-12"></i>
+                          </div>
+                          <div class="space-y-3">
+                            <h3 class="text-xl font-semibold text-white">Weekly Reflection</h3>
+                            <p class="text-sm text-[#8E8E93] leading-relaxed">
+                              Use today to review the algorithms solved earlier this week. Avoid typing—instead, verbally explain the time and space complexities or sketch the data structures on paper to ensure genuine mastery.
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                          {dayData.questions.map((q, idx) => {
+                            const qSolved = completed[q.name];
+                            return (
+                              <div 
+                                key={idx}
+                                class={`p-6 rounded-[2rem] border transition-all flex flex-col justify-between min-h-[200px] ${
+                                  qSolved 
+                                    ? 'bg-[#1C1C1E] border-white/[0.05] opacity-60' 
+                                    : 'bg-[#2C2C2E]/60 border-white/[0.08]'
+                                }`}
+                              >
+                                <div>
+                                  <div class="flex justify-between items-start mb-4">
+                                    <span class={`text-xs font-semibold ${
+                                      q.difficulty === 'Easy' ? 'text-[#32D74B]' : 
+                                      q.difficulty === 'Medium' ? 'text-[#FF9F0A]' : 'text-[#FF453A]'
+                                    }`}>
+                                      {q.difficulty}
+                                    </span>
+                                    
+                                    <button 
+                                      onClick={() => toggleComplete(q.name)}
+                                      class={`transition-all ${
+                                        qSolved ? 'text-[#32D74B]' : 'text-[#8E8E93] hover:text-white'
+                                      }`}
+                                    >
+                                      <i data-lucide={qSolved ? "check-circle-2" : "circle"} class="w-6 h-6"></i>
+                                    </button>
+                                  </div>
+                                  <h4 class={`font-semibold text-lg leading-snug ${qSolved ? 'line-through text-[#8E8E93]' : 'text-[#F2F2F7]'}`}>
+                                    {q.name}
+                                  </h4>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-6 mt-4 border-t border-white/[0.05]">
+                                  <div class="flex gap-3">
+                                    {q.links.map((link, lIdx) => (
+                                      <a 
+                                        key={lIdx}
+                                        href={link} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        class="text-xs text-[#0A84FF] hover:text-[#64D2FF] font-medium flex items-center gap-1 transition-colors"
+                                      >
+                                        {link.includes('leetcode.com') ? 'LeetCode' : 'GFG'}
+                                        <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                                      </a>
+                                    ))}
+                                  </div>
+
+                                  <button 
+                                    onClick={() => openNotesModal(q.name)}
+                                    class={`p-2 rounded-full transition-all ${
+                                      notes[q.name] 
+                                        ? 'bg-[#0A84FF]/20 text-[#0A84FF]' 
+                                        : 'bg-white/[0.05] text-[#8E8E93] hover:text-white hover:bg-white/[0.1]'
+                                    }`}
+                                  >
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      <div class="flex justify-between items-center pt-8">
+                        <button 
+                          disabled={currentDayOffset === 1}
+                          onClick={() => setCurrentDayOffset(prev => prev - 1)}
+                          class="flex items-center gap-2 text-sm font-medium text-[#8E8E93] hover:text-white disabled:opacity-30 transition-colors"
+                        >
+                          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                          Previous
+                        </button>
+                        <button 
+                          disabled={currentDayOffset === 75}
+                          onClick={() => setCurrentDayOffset(prev => prev + 1)}
+                          class="flex items-center gap-2 bg-[#F2F2F7] text-black hover:bg-white px-6 py-3 rounded-full text-sm font-semibold disabled:opacity-30 transition-all"
+                        >
+                          Next Day
+                          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+
+          {/* PATTERN BREAKDOWN VIEW */}
+          {activeTab === 'patterns' && (
+            <div class="space-y-8">
+              {/* Filters */}
+              <div class="flex flex-col md:flex-row gap-4 justify-between bg-[#1C1C1E] p-4 rounded-3xl border border-white/[0.05]">
+                <div class="relative flex-1">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-[#8E8E93]">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                  </span>
+                  <input 
+                    type="text" 
+                    placeholder="Search standard questions..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    class="w-full bg-[#2C2C2E] rounded-2xl py-3 pl-11 pr-4 text-sm text-white placeholder-[#8E8E93] focus:outline-none focus:ring-1 focus:ring-[#0A84FF] transition-all"
+                  />
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                  <select 
+                    value={selectedPattern}
+                    onChange={(e) => setSelectedPattern(e.target.value)}
+                    class="bg-[#2C2C2E] rounded-2xl py-3 px-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#0A84FF] appearance-none"
+                  >
+                    <option value="All">All Patterns</option>
+                    {patterns.map((pat, idx) => (
+                      <option key={idx} value={pat.name}>{pat.name}</option>
+                    ))}
+                  </select>
+
+                  <select 
+                    value={difficultyFilter}
+                    onChange={(e) => setDifficultyFilter(e.target.value)}
+                    class="bg-[#2C2C2E] rounded-2xl py-3 px-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#0A84FF] appearance-none"
+                  >
+                    <option value="All">All Difficulties</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Questions List */}
+              <div class="space-y-12">
+                {patterns.map((pat, pIdx) => {
+                  const patQuestions = filteredQuestions.filter(q => q.patternName === pat.name);
+                  if (patQuestions.length === 0) return null;
+                  
+                  const solvedCount = patQuestions.filter(q => completed[q.name]).length;
+                  const totalCount = patQuestions.length;
+
+                  return (
+                    <div key={pIdx} class="space-y-6">
+                      <div class="flex flex-col md:flex-row justify-between md:items-end gap-2 px-2">
+                        <div>
+                          <h3 class="text-2xl font-bold tracking-tight text-white">{pat.name}</h3>
+                        </div>
+                        <span class="text-sm font-medium text-[#8E8E93]">
+                          {solvedCount} of {totalCount} Solved
+                        </span>
+                      </div>
+
+                      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {patQuestions.map((q, idx) => {
+                          const isSolved = completed[q.name];
+                          return (
+                            <div 
+                              key={idx} 
+                              class={`p-5 rounded-3xl border transition-all flex flex-col justify-between ${
+                                isSolved 
+                                  ? 'bg-[#1C1C1E] border-white/[0.02] opacity-50' 
+                                  : 'bg-[#1C1C1E] border-white/[0.08]'
+                              }`}
+                            >
+                              <div class="flex justify-between items-start gap-4 mb-4">
+                                <h5 class={`font-semibold text-base leading-snug ${isSolved ? 'line-through text-[#8E8E93]' : 'text-[#F2F2F7]'}`}>
+                                  {q.name}
+                                </h5>
+                                <button 
+                                  onClick={() => toggleComplete(q.name)}
+                                  class={`transition-all ${
+                                    isSolved ? 'text-[#32D74B]' : 'text-[#8E8E93] hover:text-white'
+                                  }`}
+                                >
+                                  <i data-lucide={isSolved ? "check-circle-2" : "circle"} class="w-5 h-5"></i>
+                                </button>
+                              </div>
+
+                              <div class="flex items-center justify-between">
+                                <span class={`text-[11px] font-semibold tracking-wide uppercase ${
+                                  q.difficulty === 'Easy' ? 'text-[#32D74B]' : 
+                                  q.difficulty === 'Medium' ? 'text-[#FF9F0A]' : 'text-[#FF453A]'
+                                }`}>
+                                  {q.difficulty}
+                                </span>
+
+                                <div class="flex items-center gap-3">
+                                  {q.links.map((link, lIdx) => (
+                                    <a 
+                                      key={lIdx}
+                                      href={link} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      class="text-[#8E8E93] hover:text-[#0A84FF] transition-colors"
+                                    >
+                                      <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                  ))}
+                                  <button 
+                                    onClick={() => openNotesModal(q.name)}
+                                    class={notes[q.name] ? 'text-[#0A84FF]' : 'text-[#8E8E93] hover:text-white'}
+                                  >
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* STATISTICS & ANALYTICS VIEW */}
+          {activeTab === 'dashboard' && (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-[#1C1C1E] p-8 rounded-[2.5rem] border border-white/[0.05] space-y-8">
+                <h3 class="text-xl font-bold tracking-tight text-white">Insights</h3>
+                <div class="space-y-6">
+                  <div class="flex justify-between items-center text-base">
+                    <span class="text-[#8E8E93]">Total Patterns</span>
+                    <span class="font-semibold text-white">{patterns.length}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-base">
+                    <span class="text-[#8E8E93]">Total Questions</span>
+                    <span class="font-semibold text-white">{stats.total}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-base">
+                    <span class="text-[#8E8E93]">Mastered</span>
+                    <span class="font-semibold text-[#32D74B]">{stats.solved}</span>
+                  </div>
+                  <div class="flex justify-between items-center text-base">
+                    <span class="text-[#8E8E93]">Velocity</span>
+                    <span class="font-semibold text-white">~2.2 Q/Day</span>
+                  </div>
+                </div>
+                <div class="p-6 bg-[#2C2C2E] rounded-3xl">
+                  <p class="text-sm text-[#8E8E93] leading-relaxed">
+                    <span class="font-semibold text-white block mb-1">Algorithmic Focus</span>
+                    Mastery is not about the quantity of questions solved, but the quality of your pattern recognition. Avoid raw memorization.
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-[#1C1C1E] p-8 rounded-[2.5rem] border border-white/[0.05] space-y-8">
+                <h3 class="text-xl font-bold tracking-tight text-white">Difficulty Breakdown</h3>
+                <div class="space-y-8">
+                  <div>
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="font-semibold text-[#32D74B]">Easy</span>
+                      <span class="text-[#8E8E93] text-sm">{stats.easy.solved} / {stats.easy.total}</span>
+                    </div>
+                    <div class="w-full bg-[#2C2C2E] h-2 rounded-full">
+                      <div class="bg-[#32D74B] h-2 rounded-full" style={{ width: `${stats.easy.pct}%` }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="font-semibold text-[#FF9F0A]">Medium</span>
+                      <span class="text-[#8E8E93] text-sm">{stats.medium.solved} / {stats.medium.total}</span>
+                    </div>
+                    <div class="w-full bg-[#2C2C2E] h-2 rounded-full">
+                      <div class="bg-[#FF9F0A] h-2 rounded-full" style={{ width: `${stats.medium.pct}%` }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="font-semibold text-[#FF453A]">Hard</span>
+                      <span class="text-[#8E8E93] text-sm">{stats.hard.solved} / {stats.hard.total}</span>
+                    </div>
+                    <div class="w-full bg-[#2C2C2E] h-2 rounded-full">
+                      <div class="bg-[#FF453A] h-2 rounded-full" style={{ width: `${stats.hard.pct}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* NOTES WRITING MODAL WINDOW */}
+          {selectedQuestionForNote && (
+            <div class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50">
+              <div class="bg-[#1C1C1E] rounded-[2.5rem] border border-white/[0.08] max-w-lg w-full p-8 shadow-2xl">
+                <div class="flex justify-between items-center mb-6">
+                  <h4 class="text-lg font-bold tracking-tight text-white line-clamp-1">{selectedQuestionForNote}</h4>
+                  <button onClick={() => setSelectedQuestionForNote(null)} class="text-[#8E8E93] hover:text-white bg-[#2C2C2E] p-2 rounded-full">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
+                <textarea 
+                  rows="6"
+                  placeholder="Record edge cases, specific time & space complexities, or conceptual breakthroughs..."
+                  value={tempNote}
+                  onChange={(e) => setTempNote(e.target.value)}
+                  class="w-full bg-[#2C2C2E] rounded-2xl p-4 text-sm text-white placeholder-[#8E8E93] focus:outline-none focus:ring-1 focus:ring-[#0A84FF] transition-all resize-none"
+                ></textarea>
+                <div class="flex justify-end gap-3 mt-6">
+                  <button 
+                    onClick={() => setSelectedQuestionForNote(null)}
+                    class="px-5 py-2.5 text-[#0A84FF] hover:bg-[#2C2C2E] font-medium text-sm rounded-full transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={saveNote}
+                    class="px-6 py-2.5 bg-[#0A84FF] hover:bg-blue-500 text-white font-semibold text-sm rounded-full transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+
+    // Trigger Lucide icons replacing after React render finishes
+    setTimeout(() => {
+      lucide.createIcons();
+    }, 300);
+  </script>
+</body>
+</html>
